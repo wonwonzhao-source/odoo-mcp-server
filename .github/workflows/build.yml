@@ -52,14 +52,7 @@ jobs:
 
       - name: Build Windows executable
         if: matrix.os == 'windows-latest'
-        run: |
-          pyinstaller ^
-            --name odoo-mcp ^
-            --onefile ^
-            --console ^
-            --clean ^
-            src/odoo_mcp/__main__.py
-          move dist\\odoo-mcp.exe dist\\${{ matrix.artifact }}.exe
+        run: pyinstaller --name odoo-mcp --onefile --console --clean src/odoo_mcp/__main__.py; move dist\odoo-mcp.exe dist\${{ matrix.artifact }}.exe
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
