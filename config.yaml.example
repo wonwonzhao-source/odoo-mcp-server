@@ -1,0 +1,24 @@
+odoo:
+  url: "https://canadamasq.odoo.com"
+  db: "canadamasq"
+  username: "admin"
+  # api_key from Odoo settings -> User Account -> API Key
+  api_key: "${ODOO_API_KEY}"
+  # Optional: default timeout for RPC calls (seconds)
+  timeout: 30
+  # Optional: enable debug logging
+  debug: false
+
+# MCP server settings
+mcp:
+  name: "odoo"
+  description: "Interact with Odoo ERP for manufacturing operations"
+  # Tools to expose (all if not specified)
+  enabled_tools:
+    - search_read
+    - create
+    - write
+    - unlink
+    - call_method
+    - list_models
+    - get_model_fields
