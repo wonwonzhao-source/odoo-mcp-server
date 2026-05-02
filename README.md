@@ -2,58 +2,101 @@
 
 A Model Context Protocol (MCP) server that enables AI assistants (like Hermes Agent) to securely interact with Odoo ERP systems.
 
-## For Team Members
+## For Team Members — Download Pre-Built Executables
 
-### Quick Install
+### Windows (Recommended)
+1. Go to the **Releases** page: https://github.com/wonwonzhao-source/odoo-mcp-server/releases
+2. Download `odoo-mcp-windows.exe`
+3. Double-click to run — no Python needed!
 
-```bash
-# 1. Copy the odoo-mcp-server folder to your machine
-# 2. Run the installer
-./install.sh
+### macOS
+1. Go to the **Releases** page: https://github.com/wonwonzhao-source/odoo-mcp-server/releases
+2. Download `odoo-mcp-macos`
+3. In Terminal: `chmod +x odoo-mcp-macos`
+4. Run: `./odoo-mcp-macos`
 
-# 3. Edit config with your credentials
-nano ~/.config/odoo-mcp/config.yaml
+### Linux
+1. Go to the **Releases** page: https://github.com/wonwonzhao-source/odoo-mcp-server/releases
+2. Download `odoo-mcp-linux`
+3. In Terminal: `chmod +x odoo-mcp-linux`
+4. Run: `./odoo-mcp-linux`
 
-# 4. Add to your Hermes config (~/.hermes/config.yaml):
-#    mcp_servers:
-#      odoo:
-#        command: "/HOME/.hermes/hermes-agent/venv/bin/odoo-mcp"
-#        env:
-#          ODOO_URL: "https://YOUR_INSTANCE.odoo.com"
-#          ODOO_DB: "YOUR_DATABASE_NAME"
-#          ODOO_USERNAME: "your@email.com"
-#          ODOO_API_KEY: "YOUR_API_KEY"
+## Configuration
 
-# 5. Restart Hermes Agent
+### Hermes Agent Configuration
+
+Add to `~/.hermes/config.yaml`:
+
+```yaml
+mcp_servers:
+  odoo:
+    command: "/full/path/to/odoo-mcp"        # macOS/Linux
+    # command: "C:\\path\\to\\odoo-mcp.exe" # Windows
+    env:
+      ODOO_URL: "https://canadamasq.odoo.com"
+      ODOO_DB: "canadamasq-main-6993412"
+      ODOO_USERNAME: "your@email.com"
+      ODOO_API_KEY: "your-api-key"
 ```
 
-### Manual Install
+### Config File (optional — environment variables also work)
 
-```bash
-cd ~/mcp-servers/odoo-mcp-server
-pip install -e .
+Create `~/.config/odoo-mcp/config.yaml` (macOS/Linux) or `%USERPROFILE%\.config\odoo-mcp\config.yaml` (Windows):
 
-# Or with uv:
-uv pip install -e .
+```yaml
+odoo:
+  url: "https://canadamasq.odoo.com"
+  db: "canadamasq-main-6993412"
+  username: "your@email.com"
+  api_key: "your-api-key"
+  timeout: 30
+  debug: false
+
+mcp:
+  name: "odoo"
+  description: "Interact with Odoo ERP"
 ```
 
-## For Your Odoo Instance
+### Getting Your Odoo Credentials
 
-### Getting Your Database Name
-
+**Database Name:**
 1. Log into your Odoo Sh dashboard
-2. Look for the database name in the URL or settings
-3. It's often something like: `canadamasq-main-6993412`
+2. Find the database name (format: `canadamasq-main-6993412`)
 
-### Generating an API Key
-
-1. Log into your Odoo instance as admin
+**API Key:**
+1. Log into your Odoo instance
 2. Go to **Settings → Users & Companies → Users**
-3. Click on your user account
-4. Scroll to **API Key** section
-5. Click **Generate API Key**
-6. Enter a name (e.g., "Claude MCP")
-7. **Copy the key immediately** - it's shown only once!
+3. Click your user → **API Key** → **Generate**
+4. Copy the key immediately (shown only once)
+
+## For Developers
+
+### Building from Source
+
+```bash
+git clone https://github.com/wonwonzhao-source/odoo-mcp-server.git
+cd odoo-mcp-server
+pip install -e .
+odoo-mcp
+```
+
+### Building Standalone Executables
+
+```bash
+pip install pyinstaller
+pyinstaller --name odoo-mcp --onefile --console --clean src/odoo_mcp/__main__.py
+./dist/odoo-mcp          # macOS/Linux
+dist\odoo-mcp.exe        # Windows
+```
+
+### Triggering a Release Build
+
+Push a version tag — GitHub Actions will automatically build and attach the executables to the release:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
 
 ## Features
 
@@ -78,62 +121,6 @@ uv pip install -e .
 | `odoo_get_version` | Get Odoo server version |
 | `odoo_whoami` | Get current authenticated user |
 
-## Common Odoo Models
-
-### Manufacturing
-| Model | Description |
-|-------|-------------|
-| `mrp.production` | Manufacturing Orders |
-| `mrp.bom` | Bills of Materials |
-| `mrp.workorder` | Work Orders |
-| `stock.picking` | Stock Transfers |
-
-### Inventory
-| Model | Description |
-|-------|-------------|
-| `stock.quant` | Stock Quantities |
-| `stock.location` | Warehouse Locations |
-| `product.product` | Product Variants |
-
-### Sales/Purchases
-| Model | Description |
-|-------|-------------|
-| `sale.order` | Sales Orders |
-| `purchase.order` | Purchase Orders |
-| `account.move` | Invoices/Journal Entries |
-
-### Partners
-| Model | Description |
-|-------|-------------|
-| `res.partner` | Customers, Vendors, Contacts |
-
-## Configuration
-
-### Environment Variables
-
-```bash
-export ODOO_URL="https://your-instance.odoo.com"
-export ODOO_DB="your-database-name"
-export ODOO_USERNAME="your@email.com"
-export ODOO_API_KEY="your-api-key"
-```
-
-### Config File (`~/.config/odoo-mcp/config.yaml`)
-
-```yaml
-odoo:
-  url: "https://canadamasq.odoo.com"
-  db: "canadamasq-main-6993412"
-  username: "patriciag@canadamasq.com"
-  api_key: "your-api-key"
-  timeout: 30
-  debug: false
-
-mcp:
-  name: "odoo"
-  description: "Interact with Odoo ERP"
-```
-
 ## Troubleshooting
 
 ### "Database does not exist"
@@ -143,11 +130,6 @@ mcp:
 ### "Authentication failed"
 - Verify your email/username is correct
 - Regenerate your API key and try again
-- Make sure the user account has API access enabled
-
-### "Permission denied"
-- The API key user may not have access to the requested model
-- Check Odoo access rights for the user account
 
 ## Security Notes
 
