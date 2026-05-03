@@ -92,8 +92,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          which gh || npm install -g gh
-          gh release create v1.0.0 \
+          npx gh release create v1.0.0 \
+            -R wonwonzhao-source/odoo-mcp-server \
             --title "Odoo MCP Server v1.0.0" \
             --notes "Standalone executables for Windows, macOS, and Linux" \
             dist/odoo-mcp-macos \
