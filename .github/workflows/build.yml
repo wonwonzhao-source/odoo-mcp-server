@@ -89,13 +89,11 @@ jobs:
         run: chmod +x dist/odoo-mcp-macos
 
       - name: Create Release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npx gh release create v1.0.0 \
-            -R wonwonzhao-source/odoo-mcp-server \
-            --title "Odoo MCP Server v1.0.0" \
-            --notes "Standalone executables for Windows, macOS, and Linux" \
-            dist/odoo-mcp-macos \
-            dist/odoo-mcp-windows.exe \
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/odoo-mcp-macos
+            dist/odoo-mcp-windows.exe
             dist/odoo-mcp-linux
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
